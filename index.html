@@ -41,6 +41,29 @@
       line-height: 1.45;
       max-width: 1120px;
     }
+    .update-stamp {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .update-stamp strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+    .update-stamp span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f8fafc;
+      padding: 3px 10px;
+    }
     main { padding: 20px 28px 34px; }
     .main-tabs, .day-tabs {
       display: flex;
@@ -239,6 +262,10 @@
 <body>
   <header>
     <h1>Расширенный дневной дашборд Telegram Ads</h1>
+    <div class="update-stamp">
+      <span><strong>Данные обновлены:</strong>&nbsp;21.05.2026, 10:23 МСК</span>
+      <span><strong>Страница собрана:</strong>&nbsp;21.05.2026, 20:46 МСК</span>
+    </div>
     <div class="sub">
       Каждая вкладка - отдельный 24-часовой срез между двумя снимками Telegram Ads. В строках видно, какие объявления работали, сколько они потратили, сколько дали кликов и подписок, а также цена клика и подписчика в евро и рублях.
     </div>
