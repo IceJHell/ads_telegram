@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Авито - мониторинг</title>
+  <style>
+    :root { --bg:#f5f7fa; --panel:#fff; --text:#17202c; --muted:#667085; --line:#d8dee6; --blue:#2458d3; --blue-soft:#eef4ff; --amber:#9a5b00; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text); }
+    header { background:var(--panel); border-bottom:1px solid var(--line); padding:24px 28px 16px; }
+    h1 { margin:0 0 8px; font-size:24px; line-height:1.2; letter-spacing:0; }
+    .sub { color:var(--muted); font-size:14px; line-height:1.45; max-width:1120px; }
+    main { padding:20px 28px 34px; }
+    .cards { display:grid; grid-template-columns:repeat(4, minmax(150px, 1fr)); gap:10px; margin-bottom:16px; }
+    .card, .note, .table-wrap { background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+    .card { padding:12px; min-height:82px; }
+    .label { color:var(--muted); font-size:12px; margin-bottom:8px; }
+    .value { font-size:22px; font-weight:700; line-height:1.15; }
+    .hint { color:var(--muted); font-size:12px; margin-top:5px; line-height:1.35; }
+    .note { padding:14px; margin-bottom:16px; line-height:1.45; }
+    .note strong { display:block; margin-bottom:5px; }
+    .table-wrap { overflow:auto; margin-bottom:16px; }
+    table { border-collapse:collapse; width:100%; min-width:860px; }
+    th, td { border-bottom:1px solid var(--line); padding:10px; text-align:left; vertical-align:top; font-size:13px; line-height:1.45; }
+    th { background:#f8fafc; color:#344054; white-space:nowrap; }
+    .muted { color:var(--muted); }
+    .pill { display:inline-block; border:1px solid #ffd58a; background:#fff7e6; color:var(--amber); border-radius:999px; padding:4px 9px; font-size:12px; font-weight:700; }
+    h2 { margin:22px 0 10px; font-size:18px; line-height:1.25; }
+    ul { margin:6px 0 0; padding-left:18px; }
+    li { margin:0 0 6px; }
+    a { color:var(--blue); }
+    @media (max-width: 920px) { header { padding:18px 16px 12px; } main { padding:14px 16px 26px; } .cards { grid-template-columns:repeat(2, minmax(130px, 1fr)); } table { min-width:760px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Авито</h1>
+    <div class="sub">Отдельная рекламная площадка. Этот экран не загружает Telegram Ads-данные и хранит только текущий статус доступа к Avito Ads.</div>
+  </header>
+  <main>
+    <section class="cards">
+      <div class="card"><div class="label">Статус доступа</div><div class="value">Нужна авторизация</div><div class="hint">последняя проверка: 27.05.2026, 17:11 МСК</div></div>
+      <div class="card"><div class="label">Что видно</div><div class="value">лендинг</div><div class="hint">Медийная реклама на Авито: баннеры, видео, спецпроекты, вход в рекламный кабинет</div></div>
+      <div class="card"><div class="label">Кампании</div><div class="value">не видны</div><div class="hint">нужен вход в Avito Ads</div></div>
+      <div class="card"><div class="label">Следующее действие</div><div class="value">авторизация</div><div class="hint">после входа повторить мониторинг</div></div>
+    </section>
+    <div class="note"><strong>Текущая картина</strong>По ссылке кабинета Avito открывается публичный лендинг Avito Ads и якорь #login, а не список кампаний. Реальные кампании, балансы, черновики и объявления пока не видны.</div>
+    <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Значение</th></tr></thead><tbody>
+      <tr><td><strong>Запрошенная ссылка</strong></td><td><a href="https://www.avito.ru/ads/lk/campaigns-list" target="_blank" rel="noreferrer">https://www.avito.ru/ads/lk/campaigns-list</a></td></tr>
+      <tr><td><strong>Куда фактически попали</strong></td><td>https://www.avito.ru/ads#login?authsrc=ads_landing&amp;next=%2Fads%2Flk%3Ffrom%3Dads_landing_main</td></tr>
+      <tr><td><strong>Заголовок страницы</strong></td><td>Медийная реклама на Авито: баннеры, видео, спецпроекты, вход в рекламный кабинет</td></tr>
+    </tbody></table></div>
+    <h2>Видимые сигналы</h2>
+    <div class="table-wrap"><table><thead><tr><th>Что удалось увидеть</th><th>Что это значит</th></tr></thead><tbody><tr><td><ul><li>Открывается страница Avito Ads с кнопками «Перейти в кабинет».</li><li>Финальный URL содержит #login и параметр next для перехода в рекламный кабинет.</li><li>На публичной странице видны рекламные форматы, возможности кабинета, бонусы новым клиентам и кейсы.</li><li>Кампании, статистика, объявления, балансы и кнопка создания кампании внутри кабинета без входа не доступны.</li></ul></td><td><span class="pill">Мониторинг ограничен</span><br><span class="muted">Сейчас видна публичная страница Avito Ads и факт редиректа на авторизацию. Для кампаний, черновиков и создания объявления нужна авторизованная сессия.</span></td></tr></tbody></table></div>
+    <h2>Публичная информация Avito Ads</h2>
+    <div class="table-wrap"><table><thead><tr><th>Факты со страницы</th><th>План подготовки</th></tr></thead><tbody><tr><td><ul><li>Старт с бюджетом от 5 000 ₽.</li><li>Конверсионный трафик от 1 ₽ за клик.</li><li>На странице указаны форматы: перформанс реклама, медийная реклама, спецпроекты.</li><li>Возможности кабинета: аналитика, аудитории, редактор баннеров, Click-in и Click-out, прогноз результатов, интеграция с ОРД.</li></ul></td><td><ul><li>Авторизоваться в Avito Ads в браузере с сохранением сессии.</li><li>Повторно открыть https://www.avito.ru/ads/lk/campaigns-list и проверить, видны ли список кампаний и кнопка создания.</li><li>После получения сайта собрать данные для объявления: URL, оффер, география, категория, заголовок, текст, изображения и желаемый бюджет.</li><li>Перед фактической публикацией или пополнением баланса запросить отдельное подтверждение.</li></ul></td></tr></tbody></table></div>
+  </main>
+</body>
+</html>
