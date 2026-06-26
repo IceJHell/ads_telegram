@@ -264,7 +264,7 @@
     <h1>Расширенный дневной дашборд Telegram Ads</h1>
     <div class="update-stamp">
       <span><strong>Данные обновлены:</strong>&nbsp;25.06.2026, 14:00 МСК</span>
-      <span><strong>Страница собрана:</strong>&nbsp;26.06.2026, 15:29 МСК</span>
+      <span><strong>Страница собрана:</strong>&nbsp;26.06.2026, 15:55 МСК</span>
     </div>
     <div class="sub">
       Каждая вкладка - отдельный 24-часовой срез между двумя снимками Telegram Ads. В строках видно, какие объявления работали, сколько они потратили, сколько дали кликов и подписок, а также цена клика и подписчика в евро и рублях.
@@ -284,7 +284,7 @@
     const fmtEur = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const fmtRub = new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
     let activeView = (location.hash || '').replace('#', '') || 'ads';
-    let activeIndex = Math.max(0, DAYS.length - 1);
+    let activeIndex = -1;
     let query = '';
     let sortKey = 'actions';
     let sortDirection = 'desc';
@@ -348,7 +348,7 @@
       let rows = day.ads || [];
       if (q) {
         rows = rows.filter(ad => [
-          ad.title, ad.text, ad.target, ad.url, ...(ad.targetChannels || [])
+          ad.date, ad.title, ad.text, ad.target, ad.url, ...(ad.targetChannels || [])
         ].join(' ').toLowerCase().includes(q));
       }
       const sorters = {
@@ -457,6 +457,7 @@
       const rows = sortedAds(day);
       if (!rows.length) return '<div class="empty">За выбранный день нет активных объявлений или строк по текущему фильтру.</div>';
       return '<div class="table-wrap"><table><thead><tr>' +
+        (day.allDates ? '<th>Дата</th>' : '') +
         '<th>Креатив</th><th>Оценка</th><th>Канал / цель</th>' +
         sortableTh('views', 'Показы') +
         sortableTh('clicks', 'Клики') +
@@ -466,7 +467,7 @@
         sortableTh('spent', 'Потрачено') +
         sortableTh('cpc', 'CPC') +
         sortableTh('cpa', 'CPA') +
-        '</tr></thead><tbody>' + rows.map(ad => renderRow(ad, day.rate)).join('') + '</tbody></table></div>';
+        '</tr></thead><tbody>' + rows.map(ad => renderRow(ad, day)).join('') + '</tbody></table></div>';
     }
 
     function sortableTh(key, label) {
@@ -474,7 +475,8 @@
       return '<th class="num sortable" data-sort="' + key + '">' + esc(label) + '<span class="sort-mark">' + mark + '</span></th>';
     }
 
-    function renderRow(ad, rate) {
+    function renderRow(ad, day) {
+      const rate = day.rate || ad.rate || 0;
       const rating = rateAd(ad);
       const channels = (ad.targetChannels || []).length
         ? ad.targetChannels.map(ch => '<span class="pill">' + esc(ch) + '</span>').join('')
@@ -483,6 +485,7 @@
         ? '<img class="thumb" src="' + ad.image + '" alt="">'
         : '<div class="thumb no-thumb">нет фото</div>';
       return '<tr class="' + metricClass(ad) + '">' +
+        (day.allDates ? '<td><strong>' + esc(ad.date || '') + '</strong></td>' : '') +
         '<td><div class="creative-cell"><div class="ad-title">' + esc(ad.title || ('ID ' + ad.id)) + '</div><div class="muted">ID ' + esc(ad.id) + '</div><div class="ad-text">' + esc(ad.text || 'Текст не найден в creatives.json') + '</div></div></td>' +
         '<td><span class="rating ' + rating.cls + '">' + esc(rating.label) + '</span><div class="muted">' + esc(rating.note) + '</div></td>' +
         '<td>' + channels + (ad.url ? '<div class="muted" style="margin-top:6px;">' + esc(ad.url) + '</div>' : '') + '</td>' +
@@ -509,6 +512,36 @@
 
     function allAds() {
       return DAYS.flatMap(day => (day.ads || []).map(ad => ({ ...ad, date: day.date, rate: day.rate })));
+    }
+
+    function allDatesDay() {
+      const rows = allAds();
+      const rate = DAYS.at(-1)?.rate || 0;
+      const totals = rows.reduce((acc, ad) => {
+        acc.views += ad.views || 0;
+        acc.clicks += ad.clicks || 0;
+        acc.actions += ad.actions || 0;
+        acc.spent += ad.spent || 0;
+        return acc;
+      }, { views: 0, clicks: 0, actions: 0, spent: 0 });
+      return {
+        allDates: true,
+        date: 'Все даты',
+        periodLabel: 'все сохранённые дневные срезы',
+        rate,
+        rateSource: 'последний доступный курс; рубли приблизительно',
+        trackedAds: rows.length,
+        workedAds: rows.filter(ad => ad.hasActivity).length,
+        totals: {
+          views: totals.views,
+          clicks: totals.clicks,
+          actions: totals.actions,
+          spent: Number(totals.spent.toFixed(2)),
+          spentRub: Math.round(totals.spent * rate)
+        },
+        metrics: clientMetrics(totals),
+        ads: rows
+      };
     }
 
     function bestWinner() {
@@ -1052,7 +1085,7 @@
         app.innerHTML = '<div class="empty">Пока нет двух дневных снимков Telegram Ads, поэтому нечего сравнивать.</div>';
         return;
       }
-      const day = DAYS[activeIndex];
+      const day = activeIndex === -1 ? allDatesDay() : DAYS[activeIndex];
       if (activeView === 'competitors') {
         app.innerHTML = renderMainTabs() + renderCompetitors();
         bindMainTabs();
@@ -1097,7 +1130,9 @@
       }
       app.innerHTML =
         renderMainTabs() +
-        '<nav class="day-tabs">' + DAYS.map((d, i) =>
+        '<nav class="day-tabs">' +
+        '<button class="day-tab ' + (activeIndex === -1 ? 'active' : '') + '" data-index="-1"><strong>Все даты</strong><br><span class="muted">' + esc(allDatesDay().workedAds + ' строк с движением') + '</span></button>' +
+        DAYS.map((d, i) =>
           '<button class="day-tab ' + (i === activeIndex ? 'active' : '') + '" data-index="' + i + '">' +
           '<strong>' + esc(d.date) + '</strong><br><span class="muted">' + esc(d.workedAds + ' объявл., ' + d.totals.actions + ' подписок') + '</span></button>'
         ).join('') + '</nav>' +
