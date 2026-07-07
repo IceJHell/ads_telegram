@@ -24,14 +24,16 @@
     <div class="brand"><strong>Рекламные площадки</strong><span id="platform-note">Выберите проект</span></div>
     <nav class="platform-tabs">
       <button class="platform-tab" data-platform="telegram">Telegram Ads</button>
+      <button class="platform-tab" data-platform="telegram-stars">Telegram Ads ⭐</button>
       <button class="platform-tab" data-platform="avito">Авито</button>
     </nav>
   </div>
   <iframe id="frame" title="Дашборд площадки"></iframe>
   <script>
     const PLATFORMS = {
-      telegram: { title: 'Telegram Ads', src: 'telegram_ads_dashboard.html?v=1783414870373' },
-      avito: { title: 'Авито', src: 'avito_dashboard.html?v=1783414870373' }
+      telegram: { title: 'Telegram Ads', src: 'telegram_ads_dashboard.html?v=1783415247549' },
+      'telegram-stars': { title: 'Telegram Ads ⭐', src: 'telegram_ads_stars_dashboard.html?v=1783415247549' },
+      avito: { title: 'Авито', src: 'avito_dashboard.html?v=1783415247549' }
     };
     const frame = document.getElementById('frame');
     const note = document.getElementById('platform-note');
